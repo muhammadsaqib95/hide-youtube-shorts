@@ -1,0 +1,12 @@
+/* Shorts shelves on home/subscriptions */
+ytd-rich-shelf-renderer[is-shorts],
+ytd-reel-shelf-renderer,
+/* Shorts section in search results */
+grid-shelf-view-model,
+/* Shorts tab in left sidebar + guide */
+ytd-guide-entry-renderer:has(a[title="Shorts"]),
+ytd-mini-guide-entry-renderer[aria-label="Shorts"],
+/* Shorts pivot bar item (mobile-ish layouts) */
+ytd-rich-section-renderer:has(ytd-reel-shelf-renderer) {
+  display: none !important;
+}
