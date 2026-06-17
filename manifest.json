@@ -1,9 +1,10 @@
 {
   "manifest_version": 3,
   "name": "Hide YouTube Shorts",
-  "version": "1.0",
-  "description": "Hides all YouTube Shorts from your feed, search, and channels.",
+  "version": "1.0.0",
+  "description": "Hides all YouTube Shorts from your feed, search, sidebar, and channel pages.",
   "icons": {
+    "16": "icon16.png",
     "48": "icon48.png",
     "128": "icon128.png"
   },
