@@ -36,6 +36,27 @@
         padding: 0;
         cursor: pointer;
       }
+      label {
+        display: flex;
+        gap: 8px;
+        align-items: flex-start;
+        margin-top: 16px;
+        padding-top: 14px;
+        border-top: 1px solid #e8eaed;
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1.35;
+        cursor: pointer;
+      }
+      .hint {
+        margin: 6px 0 0 22px;
+        font-size: 12px;
+        font-weight: 400;
+        color: #5f6368;
+      }
+      input {
+        margin-top: 2px;
+      }
     </style>
   </head>
   <body>
@@ -43,6 +64,11 @@
       <p>Google ads skipped</p>
       <strong id="count">0</strong>
       <button id="reset" type="button">Reset count</button>
+      <label>
+        <input id="dumb-youtube" type="checkbox" />
+        <span>Dumb YouTube</span>
+      </label>
+      <p class="hint">Hides the home feed, subscriptions, and watch-page suggestions. Search and watching stay available.</p>
     </main>
     <script src="popup.js"></script>
   </body>
