@@ -1,19 +1,39 @@
 {
   "manifest_version": 3,
-  "name": "Hide YouTube Shorts",
-  "version": "1.0.0",
-  "description": "Hides all YouTube Shorts from your feed, search, sidebar, and channel pages.",
+  "name": "Hide Shorts & Google Ads",
+  "version": "1.2.0",
+  "description": "Hides YouTube Shorts and Google display ads (AdSense and Google Ad Manager) on websites.",
   "icons": {
     "16": "icon16.png",
     "48": "icon48.png",
     "128": "icon128.png"
   },
+  "action": {
+    "default_title": "Skipped Google ads",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": ["storage"],
   "content_scripts": [
     {
       "matches": ["*://*.youtube.com/*"],
       "js": ["content.js"],
       "css": ["styles.css"],
       "run_at": "document_start"
+    },
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["ads.js"],
+      "css": ["ads.css"],
+      "run_at": "document_start",
+      "all_frames": true
     }
   ]
 }

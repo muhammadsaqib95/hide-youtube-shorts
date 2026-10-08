@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Skipped ads</title>
+    <style>
+      body {
+        margin: 0;
+        min-width: 220px;
+        font-family: system-ui, sans-serif;
+        color: #202124;
+        background: #fff;
+      }
+      main {
+        padding: 16px 18px 14px;
+      }
+      p {
+        margin: 0;
+        font-size: 13px;
+        color: #5f6368;
+      }
+      strong {
+        display: block;
+        margin-top: 4px;
+        font-size: 32px;
+        line-height: 1.1;
+        color: #202124;
+      }
+      button {
+        margin-top: 14px;
+        border: 0;
+        background: transparent;
+        color: #1a73e8;
+        font: inherit;
+        font-size: 12px;
+        padding: 0;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p>Google ads skipped</p>
+      <strong id="count">0</strong>
+      <button id="reset" type="button">Reset count</button>
+    </main>
+    <script src="popup.js"></script>
+  </body>
+</html>
