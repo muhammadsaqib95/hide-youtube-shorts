@@ -4,17 +4,17 @@
   "version": "1.2.0",
   "description": "Hides YouTube Shorts and Google display ads (AdSense and Google Ad Manager) on websites.",
   "icons": {
-    "16": "icon16.png",
-    "48": "icon48.png",
-    "128": "icon128.png"
+    "16": "dumbtube-16x16.png",
+    "48": "dumbtube-48x48.png",
+    "128": "dumbtube-128x128.png"
   },
   "action": {
     "default_title": "Skipped Google ads",
     "default_popup": "popup.html",
     "default_icon": {
-      "16": "icon16.png",
-      "48": "icon48.png",
-      "128": "icon128.png"
+      "16": "dumbtube-16x16.png",
+      "48": "dumbtube-48x48.png",
+      "128": "dumbtube-128x128.png"
     }
   },
   "background": {
