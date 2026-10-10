@@ -2,74 +2,314 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Skipped ads</title>
+    <title>DumbTube</title>
     <style>
+      :root {
+        color-scheme: dark;
+        --bg: #141414;
+        --card: #1e1e1e;
+        --line: rgba(255, 255, 255, 0.08);
+        --text: #f5f5f5;
+        --muted: #9a9a9a;
+        --red: #ff2a2a;
+        --red-deep: #c41818;
+      }
+
+      * { box-sizing: border-box; }
+
       body {
         margin: 0;
-        min-width: 220px;
+        width: 320px;
         font-family: system-ui, sans-serif;
-        color: #202124;
-        background: #fff;
+        color: var(--text);
+        background: var(--bg);
       }
-      main {
-        padding: 16px 18px 14px;
+
+      header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 16px 14px;
       }
-      p {
+
+      header img {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+      }
+
+      header h1 {
         margin: 0;
-        font-size: 13px;
-        color: #5f6368;
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
       }
-      strong {
+
+      header p {
+        margin: 2px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin: 0 16px 14px;
+      }
+
+      .stat {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 12px 12px 10px;
+      }
+
+      .stat span {
+        display: block;
+        color: var(--muted);
+        font-size: 11px;
+        letter-spacing: 0.02em;
+      }
+
+      .stat strong {
         display: block;
         margin-top: 4px;
-        font-size: 32px;
-        line-height: 1.1;
-        color: #202124;
+        font-size: 22px;
+        font-weight: 700;
+        letter-spacing: -0.03em;
       }
-      button {
-        margin-top: 14px;
-        border: 0;
-        background: transparent;
-        color: #1a73e8;
-        font: inherit;
-        font-size: 12px;
+
+      .stat button {
+        margin-top: 6px;
         padding: 0;
+        border: 0;
+        background: none;
+        color: var(--red);
+        font: inherit;
+        font-size: 11px;
         cursor: pointer;
       }
-      label {
+
+      section {
+        padding: 4px 8px 8px;
+      }
+
+      section h2 {
+        margin: 8px 8px 6px;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 650;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .row {
         display: flex;
-        gap: 8px;
-        align-items: flex-start;
-        margin-top: 16px;
-        padding-top: 14px;
-        border-top: 1px solid #e8eaed;
-        font-size: 13px;
-        font-weight: 600;
-        line-height: 1.35;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+        margin: 0;
+        padding: 10px 8px;
+        border-radius: 12px;
         cursor: pointer;
       }
-      .hint {
-        margin: 6px 0 0 22px;
-        font-size: 12px;
-        font-weight: 400;
-        color: #5f6368;
+
+      .row:hover { background: rgba(255, 255, 255, 0.04); }
+
+      .copy { flex: 1; min-width: 0; }
+
+      .copy b {
+        display: block;
+        font-size: 13.5px;
+        font-weight: 600;
       }
-      input {
+
+      .copy small {
+        display: block;
         margin-top: 2px;
+        color: var(--muted);
+        font-size: 11.5px;
+        line-height: 1.35;
+      }
+
+      .switch {
+        position: relative;
+        width: 36px;
+        height: 22px;
+        flex: none;
+      }
+
+      .switch input {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .switch i {
+        position: absolute;
+        inset: 0;
+        border-radius: 99px;
+        background: #3a3a3a;
+        transition: background 0.15s ease;
+      }
+
+      .switch i::after {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #fff;
+        transition: transform 0.15s ease;
+      }
+
+      .switch input:checked + i { background: var(--red); }
+      .switch input:checked + i::after { transform: translateX(14px); }
+      .switch input:focus-visible + i { outline: 2px solid #fff; outline-offset: 2px; }
+
+      .timer {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0 8px 8px;
+        padding: 8px 10px 10px 46px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .timer input {
+        width: 56px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--card);
+        color: var(--text);
+        font: inherit;
+        font-size: 13px;
+        padding: 6px 8px;
+      }
+
+      footer {
+        padding: 4px 16px 14px;
+        color: #666;
+        font-size: 11px;
       }
     </style>
   </head>
   <body>
-    <main>
-      <p>Google ads skipped</p>
-      <strong id="count">0</strong>
-      <button id="reset" type="button">Reset count</button>
-      <label>
-        <input id="dumb-youtube" type="checkbox" />
-        <span>Dumb YouTube</span>
+    <header>
+      <img src="dumbtube-48x48.png" alt="" />
+      <div>
+        <h1>DumbTube</h1>
+        <p>Search, watch, skip the rest</p>
+      </div>
+    </header>
+
+    <div class="stats">
+      <div class="stat">
+        <span>Ads skipped</span>
+        <strong id="count">0</strong>
+        <button id="reset" type="button">Reset</button>
+      </div>
+      <div class="stat">
+        <span>Skipped today</span>
+        <strong id="today">—</strong>
+      </div>
+    </div>
+
+    <section>
+      <h2>YouTube</h2>
+      <label class="row">
+        <span class="copy">
+          <b>Dumb YouTube</b>
+          <small>Hide the home feed, subscriptions, and Up next</small>
+        </span>
+        <span class="switch"><input id="dumb-youtube" type="checkbox" /><i></i></span>
       </label>
-      <p class="hint">Hides the home feed, subscriptions, and watch-page suggestions. Search and watching stay available.</p>
-    </main>
+      <label class="row">
+        <span class="copy">
+          <b>Hide Shorts</b>
+          <small>Shelves, sidebar, and the Shorts tab</small>
+        </span>
+        <span class="switch"><input id="hide-shorts" type="checkbox" checked /><i></i></span>
+      </label>
+      <label class="row">
+        <span class="copy">
+          <b>Hide sponsored cards</b>
+          <small>Feed, search, and sidebar promotions</small>
+        </span>
+        <span class="switch"><input id="hide-sponsored" type="checkbox" checked /><i></i></span>
+      </label>
+      <label class="row">
+        <span class="copy">
+          <b>Skip video ads</b>
+          <small>Pre-roll and mid-roll ads in the player</small>
+        </span>
+        <span class="switch"><input id="skip-video-ads" type="checkbox" /><i></i></span>
+      </label>
+      <label class="row">
+        <span class="copy">
+          <b>Block autoplay</b>
+          <small>Don’t start the next video</small>
+        </span>
+        <span class="switch"><input id="block-autoplay" type="checkbox" /><i></i></span>
+      </label>
+      <label class="row">
+        <span class="copy">
+          <b>Hide comments</b>
+          <small>Comments, live chat, and end screens</small>
+        </span>
+        <span class="switch"><input id="hide-comments" type="checkbox" /><i></i></span>
+      </label>
+      <label class="row">
+        <span class="copy">
+          <b>Hide the sidebar</b>
+          <small>Leave search as the way around YouTube</small>
+        </span>
+        <span class="switch"><input id="hide-sidebar" type="checkbox" /><i></i></span>
+      </label>
+      <label class="row">
+        <span class="copy">
+          <b>Open on search</b>
+          <small>Start on the search box instead of Home</small>
+        </span>
+        <span class="switch"><input id="open-search" type="checkbox" /><i></i></span>
+      </label>
+      <label class="row">
+        <span class="copy">
+          <b>Focus timer</b>
+          <small>Pause after a set number of minutes</small>
+        </span>
+        <span class="switch"><input id="focus-timer" type="checkbox" /><i></i></span>
+      </label>
+      <div class="timer">
+        <input id="focus-minutes" type="number" min="5" max="180" value="25" />
+        minutes
+      </div>
+    </section>
+
+    <section>
+      <h2>Ads</h2>
+      <label class="row">
+        <span class="copy">
+          <b>Hide Google ads</b>
+          <small>AdSense and display ads on other sites</small>
+        </span>
+        <span class="switch"><input id="hide-google-ads" type="checkbox" checked /><i></i></span>
+      </label>
+      <label class="row">
+        <span class="copy">
+          <b>Pause hiding</b>
+          <small>Show everything again for 10 minutes</small>
+        </span>
+        <span class="switch"><input id="pause-hiding" type="checkbox" /><i></i></span>
+      </label>
+    </section>
+
+    <footer>New switches are layout only for now.</footer>
     <script src="popup.js"></script>
   </body>
 </html>

@@ -1,12 +1,11 @@
 const STORAGE_KEY = "skippedAds";
 const DUMB_KEY = "dumbYoutube";
 const countEl = document.getElementById("count");
+const dumbToggle = document.getElementById("dumb-youtube");
 
 function render(count) {
   countEl.textContent = Number(count || 0).toLocaleString();
 }
-
-const dumbToggle = document.getElementById("dumb-youtube");
 
 chrome.storage.local.get({ [STORAGE_KEY]: 0, [DUMB_KEY]: false, hideSuggestions: false }).then((data) => {
   render(data[STORAGE_KEY]);
