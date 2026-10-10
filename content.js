@@ -103,9 +103,54 @@ function hideShorts() {
 }
 
 // Run now and on DOM changes (YouTube is a SPA)
+let hidePlayablesOn = true;
+
+function playableShelf(el) {
+  return (
+    el.closest(
+      "ytd-rich-shelf-renderer, ytd-horizontal-card-list-renderer, ytd-guide-entry-renderer, ytd-mini-guide-entry-renderer"
+    ) || el.closest("ytd-rich-section-renderer")
+  );
+}
+
+function hidePlayables() {
+  const marked = [...document.querySelectorAll("[data-hidden-playable]")];
+  if (!hidePlayablesOn) {
+    marked.forEach((el) => {
+      el.style.removeProperty("display");
+      delete el.dataset.hiddenPlayable;
+    });
+    return;
+  }
+
+  const shelves = new Set();
+  document.querySelectorAll('a[href*="playables"]').forEach((anchor) => {
+    const shelf = playableShelf(anchor);
+    if (shelf && !shelf.querySelector("ytd-rich-item-renderer ytd-rich-shelf-renderer")) shelves.add(shelf);
+  });
+
+  document.querySelectorAll("span, yt-formatted-string, h2").forEach((el) => {
+    const text = [...el.childNodes]
+      .filter((child) => child.nodeType === Node.TEXT_NODE)
+      .map((child) => child.textContent)
+      .join("")
+      .trim();
+    if (text !== "YouTube Playables") return;
+    const shelf = playableShelf(el);
+    if (shelf) shelves.add(shelf);
+  });
+
+  shelves.forEach((shelf) => {
+    if (shelf.querySelector("ytd-video-renderer, ytd-compact-video-renderer") && shelf.querySelector("ytd-rich-item-renderer")) return;
+    shelf.dataset.hiddenPlayable = "1";
+    shelf.style.setProperty("display", "none", "important");
+  });
+}
+
 function hideAll() {
   hideShorts();
   hideYouTubeAds();
+  hidePlayables();
   syncDumbPlaceholder();
 }
 
@@ -132,15 +177,22 @@ function syncDumbPlaceholder() {
   }
 }
 
-chrome.storage.local.get({ dumbYoutube: false, hideSuggestions: false }).then((data) => {
+chrome.storage.local.get({ dumbYoutube: false, hideSuggestions: false, hidePlayables: true }).then((data) => {
   applyDumbYoutube(data.dumbYoutube || data.hideSuggestions);
+  hidePlayablesOn = data.hidePlayables !== false;
+  hidePlayables();
 });
 
 chrome.storage.onChanged.addListener((changes, area) => {
-  if (area === "local" && (changes.dumbYoutube || changes.hideSuggestions)) {
+  if (area !== "local") return;
+  if (changes.dumbYoutube || changes.hideSuggestions) {
     chrome.storage.local.get({ dumbYoutube: false, hideSuggestions: false }).then((data) => {
       applyDumbYoutube(data.dumbYoutube || data.hideSuggestions);
     });
+  }
+  if (changes.hidePlayables) {
+    hidePlayablesOn = Boolean(changes.hidePlayables.newValue);
+    hidePlayables();
   }
 });
 
