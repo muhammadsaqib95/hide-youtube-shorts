@@ -1,29 +1,29 @@
-/* Shorts shelves on home/subscriptions */
-ytd-rich-shelf-renderer[is-shorts],
-ytd-reel-shelf-renderer,
-/* Shorts section in search results */
-grid-shelf-view-model,
-/* Shorts tab in left sidebar + guide */
-ytd-guide-entry-renderer:has(a[title="Shorts"]),
-ytd-mini-guide-entry-renderer[aria-label="Shorts"],
-/* Shorts pivot bar item (mobile-ish layouts) */
-ytd-rich-section-renderer:has(ytd-reel-shelf-renderer),
+/* Shorts shelves, search section, sidebar, and channel tab */
+html.hide-shorts ytd-rich-shelf-renderer[is-shorts],
+html.hide-shorts ytd-reel-shelf-renderer,
+html.hide-shorts grid-shelf-view-model,
+html.hide-shorts ytd-guide-entry-renderer:has(a[title="Shorts"]),
+html.hide-shorts ytd-mini-guide-entry-renderer[aria-label="Shorts"],
+html.hide-shorts ytd-rich-section-renderer:has(ytd-reel-shelf-renderer) {
+  display: none !important;
+}
+
 /* Sponsored card only, not the feed section around it */
-ytd-ad-slot-renderer,
-ytd-in-feed-ad-layout-renderer,
-ytd-banner-promo-renderer,
-ytd-statement-banner-renderer,
-ytd-promoted-sparkles-web-renderer,
-ytd-promoted-sparkles-text-search-renderer,
-ytd-promoted-video-renderer,
-ytd-display-ad-renderer,
-ytd-video-masthead-ad-v3-renderer,
-ytd-primetime-promo-renderer,
-ytd-search-pyv-renderer,
-ytd-companion-slot-renderer,
-ytd-action-companion-ad-renderer,
-ytd-compact-promoted-video-renderer,
-ytd-rich-item-renderer:has(ytd-ad-slot-renderer) {
+html.hide-sponsored ytd-ad-slot-renderer,
+html.hide-sponsored ytd-in-feed-ad-layout-renderer,
+html.hide-sponsored ytd-banner-promo-renderer,
+html.hide-sponsored ytd-statement-banner-renderer,
+html.hide-sponsored ytd-promoted-sparkles-web-renderer,
+html.hide-sponsored ytd-promoted-sparkles-text-search-renderer,
+html.hide-sponsored ytd-promoted-video-renderer,
+html.hide-sponsored ytd-display-ad-renderer,
+html.hide-sponsored ytd-video-masthead-ad-v3-renderer,
+html.hide-sponsored ytd-primetime-promo-renderer,
+html.hide-sponsored ytd-search-pyv-renderer,
+html.hide-sponsored ytd-companion-slot-renderer,
+html.hide-sponsored ytd-action-companion-ad-renderer,
+html.hide-sponsored ytd-compact-promoted-video-renderer,
+html.hide-sponsored ytd-rich-item-renderer:has(ytd-ad-slot-renderer) {
   display: none !important;
 }
 
@@ -37,6 +37,12 @@ html.dumb-youtube #secondary,
 html.dumb-youtube .ytp-ce-element,
 html.dumb-youtube .ytp-endscreen-content,
 html.dumb-youtube ytd-compact-autoplay-renderer {
+  display: none !important;
+}
+
+html.hide-comments ytd-comments,
+html.hide-comments #comments,
+html.hide-comments ytd-engagement-panel-section-list-renderer[target-id="engagement-panel-comments-section"] {
   display: none !important;
 }
 

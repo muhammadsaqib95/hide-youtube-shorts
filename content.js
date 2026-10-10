@@ -60,17 +60,28 @@ function collectSponsoredCards(root, cards) {
   }
 }
 
+let hideSponsoredOn = true;
+
 function hideYouTubeAds() {
+  const marked = [...document.querySelectorAll("[data-hidden-sponsored]")];
+  if (!hideSponsoredOn) {
+    marked.forEach((el) => {
+      el.style.removeProperty("display");
+      delete el.dataset.hiddenSponsored;
+    });
+    return;
+  }
+
   const cards = new Set(
     [...document.querySelectorAll(YT_AD_SELECTOR)].map(
       (el) => el.closest("ytd-rich-item-renderer, ytd-compact-video-renderer, ytd-video-renderer") || el
     )
   );
   if (document.body) collectSponsoredCards(document.body, cards);
-  const unique = [...cards];
 
   let newlySkipped = 0;
-  for (const el of unique) {
+  for (const el of cards) {
+    el.dataset.hiddenSponsored = "1";
     el.style.setProperty("display", "none", "important");
     if (el.dataset.skippedAd) continue;
     el.dataset.skippedAd = "1";
@@ -82,28 +93,52 @@ function hideYouTubeAds() {
   }
 }
 
+function applyHideSponsored(enabled) {
+  hideSponsoredOn = enabled !== false;
+  document.documentElement.classList.toggle("hide-sponsored", hideSponsoredOn);
+  hideYouTubeAds();
+}
+
+let hideShortsOn = true;
+
+function markHiddenShort(el) {
+  el.dataset.hiddenShort = "1";
+  el.style.setProperty("display", "none", "important");
+}
+
 function hideShorts() {
-  // Individual short videos in grid/list (home, subscriptions, search)
-  document.querySelectorAll("a#thumbnail[href*='/shorts/'], a.shortsLockupViewModelHostEndpoint[href*='/shorts/']").forEach(a => {
+  const marked = [...document.querySelectorAll("[data-hidden-short]")];
+  if (!hideShortsOn) {
+    marked.forEach((el) => {
+      el.style.removeProperty("display");
+      delete el.dataset.hiddenShort;
+    });
+    return;
+  }
+
+  document.querySelectorAll("a#thumbnail[href*='/shorts/'], a.shortsLockupViewModelHostEndpoint[href*='/shorts/']").forEach((a) => {
     const card = a.closest(
-      "ytd-rich-item-renderer, ytd-video-renderer, ytd-grid-video-renderer, ytd-compact-video-renderer"
+      "ytd-rich-item-renderer, ytd-video-renderer, ytd-grid-video-renderer, ytd-compact-video-renderer, yt-lockup-view-model"
     );
-    if (card) card.style.display = "none";
+    if (card) markHiddenShort(card);
   });
 
-  // Shorts shelves / reels
-  document.querySelectorAll("ytd-reel-shelf-renderer, ytd-rich-shelf-renderer[is-shorts], grid-shelf-view-model").forEach(el => {
-    el.style.display = "none";
-  });
+  document.querySelectorAll("ytd-reel-shelf-renderer, ytd-rich-shelf-renderer[is-shorts], grid-shelf-view-model").forEach(markHiddenShort);
 
-  // Channel "Shorts" tab
-  document.querySelectorAll("yt-tab-shape, tp-yt-paper-tab").forEach(tab => {
-    if (tab.textContent.trim().toLowerCase() === "shorts") tab.style.display = "none";
+  document.querySelectorAll("yt-tab-shape, tp-yt-paper-tab").forEach((tab) => {
+    if (tab.textContent.trim().toLowerCase() === "shorts") markHiddenShort(tab);
   });
+}
+
+function applyHideShorts(enabled) {
+  hideShortsOn = enabled !== false;
+  document.documentElement.classList.toggle("hide-shorts", hideShortsOn);
+  hideShorts();
 }
 
 // Run now and on DOM changes (YouTube is a SPA)
 let hidePlayablesOn = true;
+let hideCommentsOn = false;
 
 function playableShelf(el) {
   return (
@@ -147,10 +182,48 @@ function hidePlayables() {
   });
 }
 
+function applyHideComments(enabled) {
+  hideCommentsOn = Boolean(enabled);
+  document.documentElement.classList.toggle("hide-comments", hideCommentsOn);
+}
+
+let openSearchOn = false;
+let focusedSearchUrl = "";
+
+function findSearchInput() {
+  const direct = document.querySelector("#search-input input, input#search, input[name='search_query']");
+  if (direct) return direct;
+  for (const host of document.querySelectorAll("yt-searchbox, ytd-searchbox")) {
+    const input = host.shadowRoot?.querySelector("input");
+    if (input) return input;
+  }
+  return null;
+}
+
+function focusSearch() {
+  if (!openSearchOn || location.pathname !== "/") {
+    focusedSearchUrl = "";
+    return;
+  }
+  if (focusedSearchUrl === location.href) return;
+  const input = findSearchInput();
+  if (!input) return;
+  focusedSearchUrl = location.href;
+  input.focus();
+}
+
+function applyOpenSearch(enabled) {
+  openSearchOn = Boolean(enabled);
+  if (openSearchOn) focusedSearchUrl = "";
+  focusSearch();
+}
+
 function hideAll() {
-  hideShorts();
-  hideYouTubeAds();
+  applyHideShorts(hideShortsOn);
+  applyHideSponsored(hideSponsoredOn);
   hidePlayables();
+  applyHideComments(hideCommentsOn);
+  focusSearch();
   syncDumbPlaceholder();
 }
 
@@ -177,10 +250,14 @@ function syncDumbPlaceholder() {
   }
 }
 
-chrome.storage.local.get({ dumbYoutube: false, hideSuggestions: false, hidePlayables: true }).then((data) => {
+chrome.storage.local.get({ dumbYoutube: false, hideSuggestions: false, hidePlayables: true, hideComments: false, hideShorts: true, hideSponsored: true, openSearch: false }).then((data) => {
   applyDumbYoutube(data.dumbYoutube || data.hideSuggestions);
   hidePlayablesOn = data.hidePlayables !== false;
   hidePlayables();
+  applyHideComments(data.hideComments);
+  applyHideShorts(data.hideShorts);
+  applyHideSponsored(data.hideSponsored);
+  applyOpenSearch(data.openSearch);
 });
 
 chrome.storage.onChanged.addListener((changes, area) => {
@@ -193,6 +270,18 @@ chrome.storage.onChanged.addListener((changes, area) => {
   if (changes.hidePlayables) {
     hidePlayablesOn = Boolean(changes.hidePlayables.newValue);
     hidePlayables();
+  }
+  if (changes.hideComments) {
+    applyHideComments(changes.hideComments.newValue);
+  }
+  if (changes.hideShorts) {
+    applyHideShorts(changes.hideShorts.newValue);
+  }
+  if (changes.hideSponsored) {
+    applyHideSponsored(changes.hideSponsored.newValue);
+  }
+  if (changes.openSearch) {
+    applyOpenSearch(changes.openSearch.newValue);
   }
 });
 

@@ -1,3 +1,4 @@
+(() => {
 const AD_SELECTOR = [
   "ins.adsbygoogle",
   ".google-auto-placed",
@@ -47,3 +48,4 @@ const observer = new MutationObserver(() => {
   });
 });
 observer.observe(document.documentElement, { childList: true, subtree: true });
+})();
